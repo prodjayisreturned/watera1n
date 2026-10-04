@@ -12,28 +12,52 @@ loading_bar() {
     echo ""
 }
 
-echo "Deleting old Watera1n..."
-rm -rf "$WTDIR"
-loading_bar
+echo ""
+echo "==============================="
+echo "      Watera1n Installer"
+echo "==============================="
+echo ""
+
+# === DELETE OLD WATERA1N ===
+if [ -d "$WTDIR" ]; then
+    echo "Found existing Watera1n installation"
+    echo "Deleting..."
+    loading_bar
+    rm -rf "$WTDIR"
+    echo "✔ Old Watera1n removed"
+else
+    echo "No previous Watera1n installation found"
+fi
 
 mkdir -p "$WTDIR"
 
-# Detect palera1n (safe)
+# === CHECK FOR PALERA1N ===
 if command -v palera1n >/dev/null 2>&1; then
-    echo "palera1n found"
+    echo ""
+    echo "✔ palera1n detected"
+    PAL_THEME="palera1n"
 else
-    echo "palera1n missing"
-    echo "Downloading palera1n theme assets..."
+    echo ""
+    echo "✘ palera1n not found"
+    echo "Installing palera1n..."
     loading_bar
 
-    # ⭐ You insert your palera1n installer here (I cannot write it)
+    # ⭐ YOUR EXACT REQUESTED COMMAND
+    /bin/sh -c "$(curl -fsSL https://static.palera.in/scripts/install.sh)"
+
+    PAL_THEME="palera1n"
+    echo "✔ palera1n installed"
 fi
 
+echo ""
 echo "Downloading Watera1n backend..."
 curl -fsSL https://raw.githubusercontent.com/prodjayisreturned/watera1n/refs/heads/main/watera1n_backend.sh -o "$WTDIR/backend.sh"
 chmod +x "$WTDIR/backend.sh"
 
 echo "Running backend..."
-"$WTDIR/backend.sh"
+"$WTDIR/backend.sh" "$PAL_THEME"
 
-echo "Done."
+echo ""
+echo "✔ Watera1n installation complete"
+echo "Location: $WTDIR"
+echo ""
