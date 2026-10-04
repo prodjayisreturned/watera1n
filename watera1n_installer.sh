@@ -1,7 +1,7 @@
 #!/bin/sh
 
-WTDIR="$HOME/Waterra1n"
-RAW_URL="https://raw.githubusercontent.com/prodjayisreturned/watera1n/refs/heads/main/watera1n%20installer"
+WTDIR="$HOME/Watera1n"
+RAW_URL="https://raw.githubusercontent.com/prodjayisreturned/watera1n/refs/heads/main/watera1n_installer.sh"
 
 loading_bar() {
     BAR=""
@@ -15,58 +15,62 @@ loading_bar() {
 
 echo ""
 echo "==============================="
-echo "      Waterra1n Installer"
+echo "      Watera1n Installer"
 echo "==============================="
 echo ""
 
 # === DELETE OLD WATERA1N ===
 if [ -d "$WTDIR" ]; then
-    echo "Found existing Waterra1n installation"
+    echo "Found existing Watera1n installation"
     echo "Deleting..."
     loading_bar
     rm -rf "$WTDIR"
-    echo "✔ Old Waterra1n removed"
+    echo "✔ Old Watera1n removed"
 else
-    echo "No previous Waterra1n installation found"
+    echo "No previous Watera1n installation found"
 fi
 
 # === CREATE NEW FOLDER ===
 mkdir -p "$WTDIR"
 
-# === CHECK FOR PALERA1N ===
-if command -v palera1n >/dev/null 2>&1; then
+# === CHECK FOR PALERA1N FILES ===
+PALBIN="/usr/local/bin/palera1n"
+
+if [ -f "$PALBIN" ]; then
     echo ""
     echo "✔ palera1n detected"
-    JB="palera1n"
+    echo "Copying palera1n files into Watera1n..."
+    loading_bar
+    cp "$PALBIN" "$WTDIR/palera1n_theme_source"
+    echo "✔ palera1n assets copied"
 else
     echo ""
     echo "✘ palera1n not found"
-    echo "Downloading palera1n into Waterra1n..."
+    echo "Downloading palera1n into Watera1n..."
     loading_bar
 
     curl -fsSL https://static.palera.in/releases/palera1n-macos-universal -o "$WTDIR/palera1n"
     chmod +x "$WTDIR/palera1n"
 
-    JB="$WTDIR/palera1n"
-    echo "✔ palera1n installed locally"
+    echo "✔ palera1n downloaded into Watera1n"
 fi
 
 # === DOWNLOAD WATERA1N INSTALLER ===
 echo ""
-echo "Downloading Waterra1n installer..."
+echo "Downloading Watera1n installer..."
 loading_bar
 
 curl -fsSL "$RAW_URL" -o "$WTDIR/watera1n_backend.sh"
 chmod +x "$WTDIR/watera1n_backend.sh"
 
-echo "✔ Waterra1n installer downloaded"
+echo "✔ Watera1n installer downloaded"
 
-# === RUN INSTALLER WITH JB COMMAND ===
+# === RUN BACKEND INSTALLER SAFELY ===
 echo ""
-echo "Running Waterra1n installer..."
-"$WTDIR/watera1n_backend.sh" "$JB"
+echo "Running Watera1n backend installer..."
+"$WTDIR/watera1n_backend.sh"
 
 echo ""
-echo "✔ Waterra1n installation complete"
+echo "✔ Watera1n installation complete"
 echo "Location: $WTDIR"
 echo ""
